@@ -27,12 +27,19 @@ if (menuToggle && navLinks) {
 
 /* HIGHLIGHT CURRENT PAGE */
 
-const currentPage =
-  window.location.pathname.split("/").pop() || "index.html";
+// Match clean URLs, legacy .html URLs, and optional trailing slashes.
+const normalizePath = pathname => {
+  const path = pathname.replace(/\/+$/, "").replace(/\.html$/, "");
+  return path === "" || path === "/index" ? "/" : path;
+};
+
+const currentPage = normalizePath(window.location.pathname);
 
 document.querySelectorAll(".nav-links a").forEach(link => {
 
-  if (link.getAttribute("href") === currentPage) {
+  const linkPath = new URL(link.getAttribute("href"), window.location.href).pathname;
+
+  if (normalizePath(linkPath) === currentPage) {
     link.classList.add("current-page");
     link.setAttribute("aria-current", "page");
   }
